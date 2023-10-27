@@ -87,7 +87,13 @@ wssMediaStream.on("connection", function connection(ws) {
         console.log(`Call Has Ended`);
         try {
           for (var track in speechRecognizers) {
-            if (speechRecognizers[track]) speechRecognizers[track].destroy();
+            console.log(`Attempting to destroy recognizer for track: ${track}`);
+            if (speechRecognizers[track]) {
+              console.log(
+                `Found recognizer for track: ${track}, now calling destroy()`
+              );
+              speechRecognizers[track].destroy();
+            }
           }
           if (flexStream !== null) flexStream.removeStream();
         } catch (err) {

@@ -4,3 +4,18 @@ This is a Media Stream WSS server to Google/Microsoft speech server. The purpose
 
 ## Getting Started
 Ensure that you have the appropriate keys from Google/Microsoft for the respective backends. Configure these in the .env file
+
+
+### Google Cloud Run
+
+1. Install the Google [Cloud CLI](https://cloud.google.com/sdk/docs/install)
+```sh
+$ gcloud init
+```
+2. gcloud run deploy twilio-media-receiver --source .
+3. Set the environment variables (from .env)
+
+
+#### Alternative
+1. gcloud builds submit --pack image=[IMAGE]
+2. gcloud run deploy twilio-media-receiver --image [IMAGE]

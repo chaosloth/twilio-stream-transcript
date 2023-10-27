@@ -6,6 +6,9 @@ This is a Media Stream WSS server to Google/Microsoft speech server. The purpose
 Ensure that you have the appropriate keys from Google/Microsoft for the respective backends. Configure these in the .env file
 
 
+## Example
+![Demo](/docs/example.png)
+
 ### Google Cloud Run
 
 1. Install the Google [Cloud CLI](https://cloud.google.com/sdk/docs/install)

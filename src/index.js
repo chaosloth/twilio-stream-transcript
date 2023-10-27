@@ -58,16 +58,22 @@ wssMediaStream.on("connection", function connection(ws) {
         // Create Stream for Twilio Flex
         flexStream = await createCall(msg.start.callSid);
 
+        let lang = msg.start?.customParameters?.lang;
+
         // Create a speech recognizer per track
         msg.start.tracks.map((trackName) => {
           speechRecognizers[trackName] = createRecognizer(SPEECH_PROVIDER_NAME);
-          speechRecognizers[trackName].init(trackName, (data) => {
-            try {
-              flexStream.publishMessage(data);
-            } catch (err) {
-              console.log("Error writing to Sync stream", err);
-            }
-          });
+          speechRecognizers[trackName].init(
+            trackName,
+            (data) => {
+              try {
+                flexStream.publishMessage(data);
+              } catch (err) {
+                console.log("Error writing to Sync stream", err);
+              }
+            },
+            lang
+          );
         });
         break;
 

@@ -1,13 +1,6 @@
 //Microsoft Speech to Text
 const sdk = require("microsoft-cognitiveservices-speech-sdk");
 
-const speechConfig = sdk.SpeechConfig.fromSubscription(
-  process.env.MS_SPEECH_KEY,
-  process.env.MS_SPEECH_REGION
-);
-
-speechConfig.speechRecognitionLanguage = "en-AU";
-
 class MicrosoftSpeechProvider {
   track = ""; // Name of track e.g. 'inbound', 'outbound'
 
@@ -19,10 +12,22 @@ class MicrosoftSpeechProvider {
   );
   pushStream = sdk.AudioInputStream.createPushStream(this.audioFormat);
   audioConfig = sdk.AudioConfig.fromStreamInput(this.pushStream);
-  speechRecognizer = new sdk.SpeechRecognizer(speechConfig, this.audioConfig);
+  speechConfig = null;
+  speechRecognizer = null;
 
-  init = (track, callback) => {
+  init = (track, callback, lang = "en-AU") => {
     this.track = track;
+    this.speechConfig = sdk.SpeechConfig.fromSubscription(
+      process.env.MS_SPEECH_KEY,
+      process.env.MS_SPEECH_REGION
+    );
+
+    this.speechConfig.speechRecognitionLanguage = lang; // Set the language if available
+    this.speechRecognizer = new sdk.SpeechRecognizer(
+      this.speechConfig,
+      this.audioConfig
+    );
+
     this.speechRecognizer.recognizing = (s, e) => {
       console.log(`RECOGNIZING:  ${track} >> (${e.result.text})`);
       callback({

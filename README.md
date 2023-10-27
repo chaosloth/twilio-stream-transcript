@@ -7,7 +7,7 @@ Ensure that you have the appropriate keys from Google/Microsoft for the respecti
 
 
 ## Example
-![Demo](/docs/example.png)
+![Demo](docs/example.png)
 
 ### Google Cloud Run
 

@@ -13,6 +13,7 @@
   "author": "Christopher Connolly",
   "license": "ISC",
   "dependencies": {
+    "@deepgram/sdk": "^2.4.0",
     "@google-cloud/speech": "^6.0.2",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",

@@ -1,0 +1,429 @@
+{
+  "description": "Voice AI - Multilang",
+  "states": [
+    {
+      "name": "Trigger",
+      "type": "trigger",
+      "transitions": [
+        {
+          "event": "incomingMessage"
+        },
+        {
+          "next": "say_play_1",
+          "event": "incomingCall"
+        },
+        {
+          "event": "incomingConversationMessage"
+        },
+        {
+          "event": "incomingRequest"
+        },
+        {
+          "event": "incomingParent"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -350,
+          "y": -90
+        }
+      }
+    },
+    {
+      "name": "stream_inbound",
+      "type": "fork-stream",
+      "transitions": [
+        {
+          "next": "send_to_flex_1",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -190,
+          "y": 2090
+        },
+        "stream_name": "ConnoStream",
+        "stream_parameters": [
+          {
+            "value": "{{flow.variables.lang}}",
+            "key": "lang"
+          }
+        ],
+        "stream_transport_type": "websocket",
+        "stream_action": "start",
+        "stream_track": "both_tracks",
+        "stream_url": "wss://twilio-stream-transcript.onrender.com"
+      }
+    },
+    {
+      "name": "say_play_1",
+      "type": "say-play",
+      "transitions": [
+        {
+          "next": "gather_lang",
+          "event": "audioComplete"
+        }
+      ],
+      "properties": {
+        "voice": "Google.en-US-Wavenet-J",
+        "offset": {
+          "x": -280,
+          "y": 360
+        },
+        "loop": 1,
+        "say": "Welcome to the contact center of the future.",
+        "language": "en-US"
+      }
+    },
+    {
+      "name": "send_to_flex_1",
+      "type": "send-to-flex",
+      "transitions": [
+        {
+          "event": "callComplete"
+        },
+        {
+          "event": "failedToEnqueue"
+        },
+        {
+          "event": "callFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -210,
+          "y": 2420
+        },
+        "workflow": "WWa716829f3013b3a60ec22177648d61e6",
+        "channel": "TC70210ef62508c47f1c5c87c318ce8d2b",
+        "attributes": "{\"voice_assist\":true}"
+      }
+    },
+    {
+      "name": "gather_lang",
+      "type": "gather-input-on-call",
+      "transitions": [
+        {
+          "next": "say_play_1",
+          "event": "keypress"
+        },
+        {
+          "next": "split_lang",
+          "event": "speech"
+        },
+        {
+          "next": "say_play_1",
+          "event": "timeout"
+        }
+      ],
+      "properties": {
+        "voice": "Google.en-US-Wavenet-J",
+        "speech_timeout": "auto",
+        "offset": {
+          "x": 580,
+          "y": 590
+        },
+        "loop": 1,
+        "hints": "australian,mandarin,singaporean",
+        "finish_on_key": "#",
+        "say": "Do you want to continue in Australian, Mandarin, Singaporian, Indian or Thai?",
+        "language": "en-US",
+        "stop_gather": true,
+        "gather_language": "en",
+        "profanity_filter": "true",
+        "timeout": 5
+      }
+    },
+    {
+      "name": "split_lang",
+      "type": "split-based-on",
+      "transitions": [
+        {
+          "next": "say_play_1",
+          "event": "noMatch"
+        },
+        {
+          "next": "set_lang_au",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "English",
+              "arguments": ["{{widgets.gather_lang.SpeechResult}}"],
+              "type": "equal_to",
+              "value": "australian"
+            }
+          ]
+        },
+        {
+          "next": "set_lang_mandarin",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "Mandarin",
+              "arguments": ["{{widgets.gather_lang.SpeechResult}}"],
+              "type": "equal_to",
+              "value": "mandarin"
+            }
+          ]
+        },
+        {
+          "next": "set_lang_singapore",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "Singapore",
+              "arguments": ["{{widgets.gather_lang.SpeechResult}}"],
+              "type": "equal_to",
+              "value": "singaporean"
+            }
+          ]
+        },
+        {
+          "next": "set_lang_thai",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "Thai",
+              "arguments": ["{{widgets.gather_lang.SpeechResult}}"],
+              "type": "equal_to",
+              "value": "thai"
+            }
+          ]
+        },
+        {
+          "next": "set_lang_tamil",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to tamil",
+              "arguments": ["{{widgets.gather_lang.SpeechResult}}"],
+              "type": "contains",
+              "value": "indian"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "input": "{{widgets.gather_lang.SpeechResult}}",
+        "offset": {
+          "x": -170,
+          "y": 950
+        }
+      }
+    },
+    {
+      "name": "set_lang_au",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "say_connecting_au",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "value": "en-AU",
+            "key": "lang"
+          }
+        ],
+        "offset": {
+          "x": -520,
+          "y": 1340
+        }
+      }
+    },
+    {
+      "name": "set_lang_mandarin",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "say_connecting_cn",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "value": "zh-CN",
+            "key": "lang"
+          }
+        ],
+        "offset": {
+          "x": -120,
+          "y": 1340
+        }
+      }
+    },
+    {
+      "name": "set_lang_singapore",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "say_connecting_sg",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "value": "en-SG",
+            "key": "lang"
+          }
+        ],
+        "offset": {
+          "x": 300,
+          "y": 1340
+        }
+      }
+    },
+    {
+      "name": "say_connecting_au",
+      "type": "say-play",
+      "transitions": [
+        {
+          "next": "stream_inbound",
+          "event": "audioComplete"
+        }
+      ],
+      "properties": {
+        "voice": "Google.en-AU-Wavenet-D",
+        "offset": {
+          "x": -520,
+          "y": 1680
+        },
+        "loop": 1,
+        "say": "okay, great! Please wait a moment until we connect you to a Flex agent.",
+        "language": "en-AU"
+      }
+    },
+    {
+      "name": "say_connecting_cn",
+      "type": "say-play",
+      "transitions": [
+        {
+          "next": "stream_inbound",
+          "event": "audioComplete"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -120,
+          "y": 1680
+        },
+        "loop": 1,
+        "say": "请稍等片刻，我们会将您连接到 Flex 代理",
+        "language": "zh-CN"
+      }
+    },
+    {
+      "name": "say_connecting_sg",
+      "type": "say-play",
+      "transitions": [
+        {
+          "next": "stream_inbound",
+          "event": "audioComplete"
+        }
+      ],
+      "properties": {
+        "voice": "Google.en-GB-Wavenet-F",
+        "offset": {
+          "x": 300,
+          "y": 1680
+        },
+        "loop": 1,
+        "say": "Please wait a moment until we connect you to a Flex agent.",
+        "language": "en-GB"
+      }
+    },
+    {
+      "name": "set_lang_thai",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "say_connecting_th",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "value": "th-TH",
+            "key": "lang"
+          }
+        ],
+        "offset": {
+          "x": 650,
+          "y": 1340
+        }
+      }
+    },
+    {
+      "name": "say_connecting_th",
+      "type": "say-play",
+      "transitions": [
+        {
+          "next": "stream_inbound",
+          "event": "audioComplete"
+        }
+      ],
+      "properties": {
+        "voice": "Google.en-GB-Wavenet-F",
+        "offset": {
+          "x": 650,
+          "y": 1680
+        },
+        "loop": 1,
+        "say": "Pord rx s̄ạk khrū̀ cnkẁā reā ca cheụ̄̀xm t̀x khuṇ kạb tạwthæn Flex",
+        "language": "th-TH"
+      }
+    },
+    {
+      "name": "set_lang_tamil",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "say_connecting_ta",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "value": "ta-IN",
+            "key": "lang"
+          }
+        ],
+        "offset": {
+          "x": 1000,
+          "y": 1340
+        }
+      }
+    },
+    {
+      "name": "say_connecting_ta",
+      "type": "say-play",
+      "transitions": [
+        {
+          "next": "stream_inbound",
+          "event": "audioComplete"
+        }
+      ],
+      "properties": {
+        "voice": "Google.en-GB-Wavenet-F",
+        "offset": {
+          "x": 1000,
+          "y": 1680
+        },
+        "loop": 1,
+        "say": "Tamil testing here, wait a moment",
+        "language": "en-IN"
+      }
+    }
+  ],
+  "initial_state": "Trigger",
+  "flags": {
+    "allow_concurrent_calls": true
+  }
+}
